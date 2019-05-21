@@ -5,21 +5,21 @@ function reverseArray($num1, $num2, $num3, $num4, $num5, $num6) {
 }
 function chooseOperator($randomNumber) {
     if ($randomNumber >= 0 && $randomNumber < 50) {
-        return "+";
+        return " + ";
     }
     else if ($randomNumber >= 50 && $randomNumber < 100) {
-        return "-";
+        return " - ";
     }
     else if ($randomNumber >= 100 && $randomNumber < 150) {
-        return "*";
+        return " * ";
     }
     else if ($randomNumber >= 150 && $randomNumber < 200) {
-        return "/";
+        return " / ";
     }
     return 0;
 }
 function evaluateEquation($equation){
-    $matches = preg_split("//", $equation, -1, PREG_SPLIT_NO_EMPTY);
+    $matches = preg_split("/ /", $equation, -1, PREG_SPLIT_NO_EMPTY);
     $operator = $matches[1];
     print_r($matches);
     echo "\n";
@@ -27,13 +27,25 @@ function evaluateEquation($equation){
         case '+':
             return $matches[0] + $matches[2];
         case '-':
+            if (($matches[0] - $matches[2]) < 0) {
+                $operator = chooseOperator(mt_rand(0, 199));
+                return evaluateEquation(formEquation($matches[0], $operator, $matches[2]));
+            }
             return $matches[0] - $matches[2];
         case '*':
             return $matches[0] * $matches[2];
         case '/':
+            if (is_float($matches[0] / $matches[2])) {
+                $operator = chooseOperator(mt_rand(0, 199));
+                return evaluateEquation(formEquation($matches[0], $operator, $matches[2]));
+            }
             return $matches[0] / $matches[2];
     }
 }
+function formEquation($firstNumber, $operator, $secondNumber) {
+    return (string)$firstNumber . $operator . (string)$secondNumber;
+}
+
 
 ?>
 
@@ -82,19 +94,20 @@ function evaluateEquation($equation){
                 for ($i = 0; $i < 5; $i++) {
                     $operator = chooseOperator(mt_rand(0, 199));
                     if ($i == 0) {
-                        $stringEquation = (string)$firstArray[$i] . $operator . (string)$firstArray[$i+1];
+                        $stringEquation = formEquation($firstArray[$i], $operator, (string)$firstArray[$i+1]);
                        // $keywords = preg_split("//", $stringEquation, -1, PREG_SPLIT_NO_EMPTY);
                        // print_r($keywords);
                         $output = evaluateEquation($stringEquation);
-                        echo $stringEquation;
+                       // echo $stringEquation;
                     }
                     else {
-                        $stringEquation = (string)$output . $operator . (string)$firstArray[$i+1];
+                        $stringEquation = formEquation($output, $operator, $firstArray[$i+1]);
                         $output = evaluateEquation($stringEquation);
-                        echo $stringEquation;
+                      //  echo $stringEquation;
                     }
-                    echo $stringEquation;
+                   // echo $stringEquation;
                 }
+                echo $output;
                /* foreach ($firstArray as $item) {
                     echo (string) $item . $operator . "\n";
                 }*/
