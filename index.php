@@ -21,8 +21,6 @@ function chooseOperator($randomNumber) {
 function evaluateEquation($equation){
     $matches = preg_split("/ /", $equation, -1, PREG_SPLIT_NO_EMPTY);
     $operator = $matches[1];
-    print_r($matches);
-    echo "\n";
     switch($operator){
         case '+':
             return $matches[0] + $matches[2];
@@ -88,6 +86,7 @@ function formEquation($firstNumber, $operator, $secondNumber) {
             }
             else {
                 $firstArray = reverseArray($_GET["num1"], $_GET["num2"], $_GET["num3"], $_GET["num4"], $_GET["num5"], $_GET["num6"]);
+                shuffle($firstArray);
                 $output = 0;
                 $stringEquation;
                 $operator;
@@ -108,6 +107,11 @@ function formEquation($firstNumber, $operator, $secondNumber) {
                    // echo $stringEquation;
                 }
                 echo $output;
+                if (isset($_GET["equation"])){
+                    $userEquation = $_GET["equation"];
+                   echo $userEquation;
+                }
+                
                /* foreach ($firstArray as $item) {
                     echo (string) $item . $operator . "\n";
                 }*/
