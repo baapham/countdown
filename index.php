@@ -81,7 +81,7 @@ function inOriginalSet($str, $originalArray) {
     // have to convert to 1d array
     preg_match_all('!\d+!', $str, $matches);
     $newMatches = convert2DInto1D($matches);
-    if (array_intersect($newMatches, $originalArray) == $newMatches) {
+    if (!array_diff($newMatches, $originalArray)) {
         return true;
     }
     return false;
@@ -127,7 +127,7 @@ function convert2DInto1D($inputArray) {
                 if ($userIntEquation == $output) {
                     echo "Good Job";
                 }
-                else {
+                else if (($userIntEquation != $output) && (!empty($userIntEquation))){
                     echo "WRONG";
                 }
             }  
