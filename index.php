@@ -1,3 +1,6 @@
+<!-- Functions -->
+
+
 <!-- Given array elements, reverses the array -->
 <?php 
 function reverseArray($num1, $num2, $num3, $num4, $num5, $num6) {
@@ -25,6 +28,7 @@ function evaluateEquation($equation){
         case '+':
             return $matches[0] + $matches[2];
         case '-':
+            // Avoiding equation going below 0
             if (($matches[0] - $matches[2]) < 0) {
                 $operator = chooseOperator(mt_rand(0, 199));
                 return evaluateEquation(formEquation($matches[0], $operator, $matches[2]));
@@ -33,6 +37,7 @@ function evaluateEquation($equation){
         case '*':
             return $matches[0] * $matches[2];
         case '/':
+            // Avoiding equation going below returning a float
             if (is_float($matches[0] / $matches[2])) {
                 $operator = chooseOperator(mt_rand(0, 199));
                 return evaluateEquation(formEquation($matches[0], $operator, $matches[2]));
@@ -43,11 +48,96 @@ function evaluateEquation($equation){
 function formEquation($firstNumber, $operator, $secondNumber) {
     return (string)$firstNumber . $operator . (string)$secondNumber;
 }
-
-
+function calculateUserEquation($equation) {
+    return eval('return ' . $equation . ';');
+}
+function generateArray($num1, $num2, $num3, $num4, $num5, $num6) {
+    $firstArray = reverseArray($_GET["num1"], $_GET["num2"], $_GET["num3"], $_GET["num4"], $_GET["num5"], $_GET["num6"]);
+    shuffle($firstArray);
+    return $firstArray;
+}
+function generateOutput($firstArray){
+    $output = 0;
+    $stringEquation;
+    $operator;
+    for ($i = 0; $i < 5; $i++) {
+        $operator = chooseOperator(mt_rand(0, 199));
+        if ($i == 0) {
+            $stringEquation = formEquation($firstArray[$i], $operator, (string)$firstArray[$i+1]);
+        // $keywords = preg_split("//", $stringEquation, -1, PREG_SPLIT_NO_EMPTY);
+            //print_r($stringEquation);
+            $output = evaluateEquation($stringEquation);
+        // echo $stringEquation;
+        }
+        else {
+            $stringEquation = formEquation($output, $operator, $firstArray[$i+1]);
+            $output = evaluateEquation($stringEquation);
+        //  echo $stringEquation;
+        }
+    }
+    return $output;
+}
+function inOriginalSet($str, $originalArray) {
+    // have to convert to 1d array
+    preg_match_all('!\d+!', $str, $matches);
+    $newMatches = convert2DInto1D($matches);
+    if (array_intersect($newMatches, $originalArray) == $newMatches) {
+        return true;
+    }
+    return false;
+}
+function convert2DInto1D($inputArray) {
+    $outputArray = array();
+    for ($i = 0; $i < count($inputArray); $i++) {
+      for ($j = 0; $j < count($inputArray[$i]); $j++) {
+        $outputArray[] = $inputArray[$i][$j];
+      }
+    }
+    return $outputArray;
+}   
 ?>
 
+<!-- HTML Code -->
+<?php
+    // if there aren't enough numbers, it prompts the user to enter 6 numbers
+    if (empty($_GET["num1"]) || empty($_GET["num2"]) || empty($_GET["num3"]) || empty($_GET["num4"]) || empty($_GET["num5"]) || empty($_GET["num6"])) {
+        $isValid = false;
+        echo "Please input 6 numbers!";
+    }
+    else {
+        $isValid = true;
+        $num1 = $_GET["num1"];
+        $num2 = $_GET["num2"];
+        $num3 = $_GET["num3"];
+        $num4 = $_GET["num4"];
+        $num5 = $_GET["num5"];
+        $num6 = $_GET["num6"];
+        $firstArray = generateArray($num1, $num2, $num3, $num4, $num5, $num6);
+        if (!empty($_GET["calculatedOutput"])) {
+            $output = $_GET["calculatedOutput"];
+        }
+        else {
+            $output = generateOutput($firstArray);
+        }   
+        //echo $output;
+        if (isset($_GET["equation"])){
+            $userStringEquation = $_GET["equation"];
+            if (inOriginalSet($userStringEquation, $firstArray) == true) {
+                $userIntEquation = calculateUserEquation($userStringEquation);
+                if ($userIntEquation == $output) {
+                    echo "Good Job";
+                }
+                else {
+                    echo "WRONG";
+                }
+            }  
+            else {
+                echo "Please input a valid equation";
+            }
 
+        }
+    }
+?>
 <!doctype html>
 <html lang="en">
     <head>
@@ -63,7 +153,8 @@ function formEquation($firstNumber, $operator, $secondNumber) {
     <body>
     <div class="content">
         <form action="index.php" method="get">
-            <a href="index.php"><h1>Welcome to Countdown</h1></a>
+            <h1>Welcome to Countdown</h1>
+            <a href="index.php"><h2>Press here to restart</h2></a>
             <p> Please choose 6 numbers</p><br>
             <!-- User inputs the numbers, after submitting, the value remains in the box -->
             <input type="number" name="num1" class="numberInput" value="<?php if(isset($_GET['num1'])) echo $_GET['num1']; ?>">
@@ -73,50 +164,12 @@ function formEquation($firstNumber, $operator, $secondNumber) {
             <input type="number" name="num5" class="numberInput" value="<?php if(isset($_GET['num5'])) echo $_GET['num5']; ?>">
             <input type="number" name="num6" class="numberInput" value="<?php if(isset($_GET['num6'])) echo $_GET['num6']; ?>"><br>
             <p class="buttonNew"> <button type="submit" class="btn btn-primary btn-lg">Generate a number!</button></p>
-        </form>
-        <form action="index.php" method="get">
             <p>Input your equation:</p>
-            <input type="text" name="equation" class="fullEquation">
-            <p class="buttonNew"> <button type="button" class="btn btn-primary btn-lg">Submit</button></p>
+            <input type="text" name="equation" class="fullEquation" value="<?php if(isset($_GET['equation'])) echo $_GET['equation']; ?>">
+            <p class="buttonNew"> <button type="submit" class="btn btn-primary btn-lg">Submit</button></p>
+            <input type="text" name="calculatedOutput" value="<?php if($isValid == true) echo $output;?>" readonly/>
         </form>
-        <?php
-            // if there aren't enough numbers, it prompts the user to enter 6 numbers
-            if (empty($_GET["num1"]) || empty($_GET["num2"]) || empty($_GET["num3"]) || empty($_GET["num4"]) || empty($_GET["num5"]) || empty($_GET["num6"])) {
-                echo "Please input 6 numbers!";
-            }
-            else {
-                $firstArray = reverseArray($_GET["num1"], $_GET["num2"], $_GET["num3"], $_GET["num4"], $_GET["num5"], $_GET["num6"]);
-                shuffle($firstArray);
-                $output = 0;
-                $stringEquation;
-                $operator;
-                for ($i = 0; $i < 5; $i++) {
-                    $operator = chooseOperator(mt_rand(0, 199));
-                    if ($i == 0) {
-                        $stringEquation = formEquation($firstArray[$i], $operator, (string)$firstArray[$i+1]);
-                       // $keywords = preg_split("//", $stringEquation, -1, PREG_SPLIT_NO_EMPTY);
-                       // print_r($keywords);
-                        $output = evaluateEquation($stringEquation);
-                       // echo $stringEquation;
-                    }
-                    else {
-                        $stringEquation = formEquation($output, $operator, $firstArray[$i+1]);
-                        $output = evaluateEquation($stringEquation);
-                      //  echo $stringEquation;
-                    }
-                   // echo $stringEquation;
-                }
-                echo $output;
-                if (isset($_GET["equation"])){
-                    $userEquation = $_GET["equation"];
-                   echo $userEquation;
-                }
-                
-               /* foreach ($firstArray as $item) {
-                    echo (string) $item . $operator . "\n";
-                }*/
-            }
-        ?>
+        
     </div>
     </body>
 </html>
