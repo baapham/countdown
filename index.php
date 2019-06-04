@@ -124,6 +124,7 @@ function convert2DInto1D($inputArray) {
             $userStringEquation = $_GET["equation"];
             if (inOriginalSet($userStringEquation, $firstArray) == true) {
                 $userIntEquation = calculateUserEquation($userStringEquation);
+                $outcome;
                 if ($userIntEquation == $output) {
                     echo "Good Job";
                 }
@@ -155,7 +156,7 @@ function convert2DInto1D($inputArray) {
         <form action="index.php" method="get">
             <h1>Welcome to Countdown</h1>
             <a href="index.php"><h2>Press here to restart</h2></a>
-            <p> Please choose 6 numbers</p><br>
+            <p> Please choose 6 numbers</p>
             <!-- User inputs the numbers, after submitting, the value remains in the box -->
             <input type="number" name="num1" class="numberInput" value="<?php if(isset($_GET['num1'])) echo $_GET['num1']; ?>">
             <input type="number" name="num2" class="numberInput" value="<?php if(isset($_GET['num2'])) echo $_GET['num2']; ?>">
@@ -164,10 +165,12 @@ function convert2DInto1D($inputArray) {
             <input type="number" name="num5" class="numberInput" value="<?php if(isset($_GET['num5'])) echo $_GET['num5']; ?>">
             <input type="number" name="num6" class="numberInput" value="<?php if(isset($_GET['num6'])) echo $_GET['num6']; ?>"><br>
             <p class="buttonNew"> <button type="submit" class="btn btn-primary btn-lg">Generate a number!</button></p>
+            <p>Get to this number:</p>
+            <input type="text" name="calculatedOutput" value="<?php if($isValid == true) echo $output;?>" readonly/>
             <p>Input your equation:</p>
             <input type="text" name="equation" class="fullEquation" value="<?php if(isset($_GET['equation'])) echo $_GET['equation']; ?>">
             <p class="buttonNew"> <button type="submit" class="btn btn-primary btn-lg">Submit</button></p>
-            <input type="text" name="calculatedOutput" value="<?php if($isValid == true) echo $output;?>" readonly/>
+
         </form>
         
     </div>
