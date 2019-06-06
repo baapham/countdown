@@ -100,9 +100,12 @@ function convert2DInto1D($inputArray) {
 <!-- HTML Code -->
 <?php
     // if there aren't enough numbers, it prompts the user to enter 6 numbers
-    if (empty($_GET["num1"]) || empty($_GET["num2"]) || empty($_GET["num3"]) || empty($_GET["num4"]) || empty($_GET["num5"]) || empty($_GET["num6"])) {
+    if (empty($_GET["num1"]) && empty($_GET["num2"]) && empty($_GET["num3"]) && empty($_GET["num4"]) && empty($_GET["num5"]) && empty($_GET["num6"])) {
         $isValid = false;
-        echo "Please input 6 numbers!";
+    }
+    else if (empty($_GET["num1"]) || empty($_GET["num2"]) || empty($_GET["num3"]) || empty($_GET["num4"]) || empty($_GET["num5"]) || empty($_GET["num6"])) {
+        $isValid = false;
+        $result = "Please input 6 numbers!";
     }
     else {
         $isValid = true;
@@ -119,21 +122,20 @@ function convert2DInto1D($inputArray) {
         else {
             $output = generateOutput($firstArray);
         }   
-        //echo $output;
         if (isset($_GET["equation"])){
             $userStringEquation = $_GET["equation"];
             if (inOriginalSet($userStringEquation, $firstArray) == true) {
                 $userIntEquation = calculateUserEquation($userStringEquation);
                 $outcome;
                 if ($userIntEquation == $output) {
-                    echo "Good Job";
+                    $result = "Good Job";
                 }
                 else if (($userIntEquation != $output) && (!empty($userIntEquation))){
-                    echo "WRONG";
+                    $result = "Incorrect Answer";
                 }
             }  
             else {
-                echo "Please input a valid equation";
+                $result = "Please input a valid equation";
             }
 
         }
@@ -170,7 +172,7 @@ function convert2DInto1D($inputArray) {
             <p>Input your equation:</p>
             <input type="text" name="equation" class="fullEquation" value="<?php if(isset($_GET['equation'])) echo $_GET['equation']; ?>">
             <p class="buttonNew"> <button type="submit" class="btn btn-primary btn-lg">Submit</button></p>
-
+            <p><?php if (isset($result)) echo $result; ?></p>
         </form>
         
     </div>
