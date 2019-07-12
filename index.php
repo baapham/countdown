@@ -124,6 +124,9 @@ function convert2DInto1D($inputArray) {
         }   
         if (isset($_GET["equation"])){
             $userStringEquation = $_GET["equation"];
+            if (preg_match('/^[0-9]+\/\*+-[0-9]/', $userStringEquation)) {
+                echo "true";
+            }
             if (inOriginalSet($userStringEquation, $firstArray) == true) {
                 $userIntEquation = calculateUserEquation($userStringEquation);
                 $outcome;
