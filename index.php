@@ -138,7 +138,10 @@ function convert2DInto1D($inputArray) {
             	else {
                 	$result = "Please input an equation that uses your numbers!";
             	}
-	   }
+	    }
+	   else if (empty($_GET["equation"])){
+           	$result = "";
+	  }
 	   else {
 		 $result = "Please input a valid equation!";
 		}
