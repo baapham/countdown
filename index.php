@@ -124,23 +124,24 @@ function convert2DInto1D($inputArray) {
         }   
         if (isset($_GET["equation"])){
             $userStringEquation = $_GET["equation"];
-            if (preg_match('/^[0-9]+\/\*+-[0-9]/', $userStringEquation)) {
-                echo "true";
-            }
-            if (inOriginalSet($userStringEquation, $firstArray) == true) {
-                $userIntEquation = calculateUserEquation($userStringEquation);
-                $outcome;
-                if ($userIntEquation == $output) {
-                    $result = "Good Job";
-                }
-                else if (($userIntEquation != $output) && (!empty($userIntEquation))){
-                    $result = "Incorrect Answer";
-                }
-            }  
-            else {
-                $result = "Please input a valid equation";
-            }
-
+            if (preg_match('/^([0-9]+[\+\-\*\/])*[0-9]+$/', $userStringEquation)) {
+            	if (inOriginalSet($userStringEquation, $firstArray) == true) {
+               		$userIntEquation = calculateUserEquation($userStringEquation);
+                	$outcome;
+                	if ($userIntEquation == $output) {
+                   	 	$result = "Good Job";
+                	}
+                	else if (($userIntEquation != $output) && (!empty($userIntEquation))){
+                    		$result = "Incorrect Answer";
+                	}
+            	}  
+            	else {
+                	$result = "Please input an equation that uses your numbers!";
+            	}
+	   }
+	   else {
+		 $result = "Please input a valid equation!";
+		}
         }
     }
 ?>
