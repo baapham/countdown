@@ -11,4 +11,4 @@ You have to get to the generated number with an equation you provide.
 ### Contribution
 
 Feel free to contribute if you have any ideas!
-&copy
+©
